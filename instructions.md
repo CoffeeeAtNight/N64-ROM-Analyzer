@@ -6,24 +6,28 @@ This project involves creating a program that parses and analyzes Nintendo 64 (N
 - Combine C and MIPS assembly for low-level file parsing and binary data manipulation.
 - Provide a tangible and retro-cool application for learning.
 
+## Prerequisites
+To complete this project, you’ll need:
+
 ### Tools
 1. **GCC (or Clang)**
    - Install via your system’s package manager:
      ```bash
-     sudo apt install gcc # Linux
-     brew install gcc     # macOS
+     sudo pacman -S gcc
      ```
 
 2. **GNU Assembler for MIPS (or MIPS Cross-Compiler)**
    - Install a MIPS toolchain:
      ```bash
-     sudo apt install binutils-mips-linux-gnu gcc-mips-linux-gnu
+     sudo pacman -S binutils gcc-multilib-mips64-linux-gnu
      ```
    - Alternatively, download a prebuilt toolchain: [mips64-toolchain](https://github.com/archlinux/svntogit-community/tree/packages/mips64-toolchain/trunk).
 
 3. **Hex Editor** (Optional, but helpful)
-   - Linux: `hexedit`
-   - macOS: `Hex Fiend`
+   - Install via Pacman:
+     ```bash
+     sudo pacman -S hexedit
+     ```
 
 4. **N64 ROM File**
    - Use a legally acquired or homebrew N64 ROM (e.g., tech demos or open-source games).
@@ -51,7 +55,7 @@ This project involves creating a program that parses and analyzes Nintendo 64 (N
 2. Verify the tools are working:
    ```bash
    gcc --version
-   mips-linux-gnu-as --version
+   mips64-linux-gnu-as --version
    ```
 
 ### Step 2: Parse ROM Metadata in Assembly
@@ -61,10 +65,21 @@ This project involves creating a program that parses and analyzes Nintendo 64 (N
    - Parse the region code (offset 0x3C).
 2. Save the assembly code in a file, e.g., `rom_utils.s`.
 
+#### Example Assembly Code
+```asm
+.section .text
+.globl extract_rom_size
+
+extract_rom_size:
+    lw $t0, 0x18($a0)   # Load ROM size from header
+    srl $v0, $t0, 20    # Convert to MB
+    jr $ra              # Return
+```
+
 ### Step 3: Compile and Run
 1. Compile the assembly code:
    ```bash
-   mips-linux-gnu-as -o rom_utils.o rom_utils.s
+   mips64-linux-gnu-as -o rom_utils.o rom_utils.s
    ```
 2. Compile and link the C program:
    ```bash
